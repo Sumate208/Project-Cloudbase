@@ -1,9 +1,9 @@
 # Project-Cloudbase
 > Run frontend
 ```
- yarn serve
+yarn serve
 ```
 > Run Backend
 ```
- npm run serve
+npm run serve
 ```
