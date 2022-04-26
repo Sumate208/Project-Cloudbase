@@ -1,3 +1,9 @@
 # Project-Cloudbase
-#run_frontend
+> Run frontend
+```
  yarn serve
+```
+> Run Backend
+```
+ npm run serve
+```
