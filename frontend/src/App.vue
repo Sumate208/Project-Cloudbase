@@ -27,11 +27,6 @@
               <strong>Add Product</strong>
             </router-link>
           </div>
-          <div v-if="user&&user.first_name != 'Admin' " class="navbar-item">
-            <router-link to="/product/create" class="button is-info">
-              <i class="fas fa-shopping-cart"></i>
-            </router-link>
-          </div>
           <div v-if="user" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <figure class="image is-24x24 my-auto">
