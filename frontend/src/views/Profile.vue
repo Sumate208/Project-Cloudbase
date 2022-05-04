@@ -81,23 +81,17 @@ import axios from '@/plugins/axios'
 export default {
   data() {
     return {
-        user: null,
+        user: this.$parent.$data.user,
         edit: false,
         modal_confirm: false,
     };
   },
-  mounted() {
-    this.getUser();
-  },
   methods: {
-    getUser () {
-      axios.get('/user/me').then(res => {
-        this.user = res.data
-      })
-    },
-    save(){
-
-    },
+    // getUser () {
+    //   axios.get('/user/me').then(res => {
+    //     this.user = res.data
+    //   })
+    // },
     cancel(){
       this.modal_confirm = !this.modal_confirm
     }

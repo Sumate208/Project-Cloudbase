@@ -1,6 +1,6 @@
 <template>
   <div class="container is-widescreen">
-    <div class="columns" :class="{'is-centered':!user}">
+    <div class="columns">
       <!-- Column แสดงสินค้า--------------------------------------------------------->
       <div class="column is-8 pt-6">
         <h1 class="is-size-4 mb-4">สิ้นค้าในร้านทั้งหมด ({{products.length}}) รายการ</h1>
@@ -30,7 +30,7 @@
                         <p>คงเหลือ {{product.quantity}}</p>
                     </div>
                     <!-- >>>>>ไอคอนรูปตะกร้า <<<<<<,s----------------------------------------->
-                    <div class="icon is-size-4" v-if="user" @click="addToCart(product)">
+                    <div class="icon is-size-4" @click="addToCart(product)">
                         <i class="fas fa-shopping-cart has-text-warning"></i>
                     </div>
                   </div>
@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <div class="column is-3 pt-6 ml-6" v-if="user">
+      <div class="column is-3 pt-6 ml-6">
         <div class="icon is-size-1 button cartButton" @click="showCart = !showCart">
           <i class="fas fa-shopping-cart"></i>
         </div>
@@ -123,15 +123,9 @@ export default {
     };
   },
   mounted() {
-    this.getUser ();
     this.getProduct();
   },
   methods: {
-    getUser () {
-      axios.get('/user/me').then(res => {
-        this.user = res.data
-      })
-    },
     getProduct(){
       axios.get('http://localhost:3000/getproduct').then(res => {
         this.products = res.data
