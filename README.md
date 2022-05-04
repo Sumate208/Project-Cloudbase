@@ -2,12 +2,12 @@ SetUp FrontEnd
 ```
 cd frontend
 npm install
-npm runserve
+npm run serve
 ```
 
 SetUp BackEnd
 ```
 cd backend
 npm install
-npm runserve
+npm run serve
 ```
