@@ -29,7 +29,10 @@ router.put('/getbills', async (req, res, next) => {
         let checkList = []
         let billList = []
         for(bill of bills){
+            console.log(checkList)
+            console.log(bill)
             if(checkList.includes(bill.bid) == false){
+                console.log('new')
                 billList.push({
                     first_name: bill.first_name,
                     last_name: bill.last_name,
@@ -46,17 +49,12 @@ router.put('/getbills', async (req, res, next) => {
                 checkList.push(bill.bid)
             }
             else{
-                for(let i=0 ; i < billList.length ; i++){
-                    if(bill.bid == billList[i].bid){
-                        billList[i].item.push({
-                            pid: bill.pid,
-                            title: bill.title,
-                            price: bill.price,
-                            quantity: bill.quantity,
-                        })
-                    }
-                    break
-                }
+                billList[checkList.indexOf(bill.bid)].item.push({
+                    pid: bill.pid,
+                    title: bill.title,
+                    price: bill.price,
+                    quantity: bill.quantity,
+                })
             }
         }
         res.status(200).json({'bills': billList})

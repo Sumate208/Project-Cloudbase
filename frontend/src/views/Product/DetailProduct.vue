@@ -112,7 +112,7 @@
       <div class="column is-one-quarter">
         <div class="field is-grouped">
           <div class="control" v-if="!edit">
-            <button @click="edit = !edit" class="button is-link" >Edit Profile</button>
+            <button @click="edit = !edit" class="button is-link" >Edit Detail</button>
           </div>
           <div class="control" v-if="edit">
             <button @click="openModalUpdate()" class="button is-success" >Save Change</button>
