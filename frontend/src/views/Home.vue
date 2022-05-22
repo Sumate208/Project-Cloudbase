@@ -2,12 +2,13 @@
   <div class="container is-widescreen">
     <div class="columns">
       <!-- Column แสดงสินค้า--------------------------------------------------------->
+      <div class="column" v-if="$parent.$data.user.role != 'Customer'"></div>
       <div class="column is-8 pt-6">
         <h1 class="is-size-4 mb-4">สิ้นค้าในร้านทั้งหมด ({{products.length}}) รายการ</h1>
         <div class="container is-max-desktop">
           <div class="is-multiline columns is-variable is-2">
             <!-- Card element start here------------------------------------------>
-            <div id="card_product" class="column is-one-quarter" v-for="product in products" :key="product.id">
+            <div id="card_product" class="column is-one-quarter" v-for="product in products" :key="product.pid">
               <div class="card">
                 <div class="card-image productImage">
                   <div class="icon is-size-4 best" v-if="product.bestsell==1">
@@ -30,8 +31,11 @@
                         <p>คงเหลือ {{product.quantity}}</p>
                     </div>
                     <!-- >>>>>ไอคอนรูปตะกร้า <<<<<<,s----------------------------------------->
-                    <div class="icon is-size-4" @click="addToCart(product)">
-                        <i class="fas fa-shopping-cart has-text-warning"></i>
+                    <div v-if="$parent.$data.user.role == 'Customer'" class="icon is-size-4" @click="addToCart(product)">
+                        <i class="fas fa-shopping-cart has-text-info"></i>
+                    </div>
+                    <div v-if="$parent.$data.user.role != 'Customer'" class="icon is-size-4" @click="productDetail(product)">
+                        <i class="fas fa-info-circle has-text-info"></i>
                     </div>
                   </div>
                 </div>
@@ -41,7 +45,9 @@
         </div>
       </div>
 
-      <div class="column is-3 pt-6 ml-6">
+      <!-- ตระกร้าไอเท็ม -->
+      <div class="column" v-if="$parent.$data.user.role != 'Customer'"></div>
+      <div class="column is-3 pt-6 ml-6" v-if="$parent.$data.user.role == 'Customer'">
         <div class="icon is-size-1 button cartButton" @click="showCart = !showCart">
           <i class="fas fa-shopping-cart"></i>
         </div>
@@ -88,24 +94,6 @@
         </div>
       </div>
     </div>
-  
-    <!-- ModalMethod -->
-    <!-- <div class="modal" :class="{'is-active':modal_cart}">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Update Profile</p>
-          <button class="delete" aria-label="close" @click="cancel()"></button>
-        </header>
-        <section class="modal-card-body">
-          <p>Are you sure to update profile?</p>
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button is-success" @click="save()">Save changes</button>
-          <button class="button" @click="cancel()">Cancel</button>
-        </footer>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -116,8 +104,7 @@ export default {
   name: "Home",
   data() {
     return {
-      user: null,
-      cart: [],
+      cart: JSON.parse(localStorage.getItem("cart")),
       showCart: false,
       products: [],
     };
@@ -129,26 +116,12 @@ export default {
     getProduct(){
       axios.get('http://localhost:3000/getproduct').then(res => {
         this.products = res.data
-        // console.log(res.data);
       })
-    },
-    imagePath(file_path) {
-      if (file_path) {
-        return "http://localhost:3000/" + file_path;
-      } else {
-        return "https://bulma.io/images/placeholders/640x360.png";
-      }
-    },
-    shortContent(content) {
-      if (content.length > 200) {
-        return content.substring(0, 197) + "...";
-      }
-      return content;
     },
     addToCart(product){
       let have = false, index = 0, qInCart = null;
       for(let i = 0 ; i < this.cart.length ; i++){
-          if(this.cart[i].id == product.id) {
+          if(this.cart[i].pid == product.pid) {
             have = true;
             index = i;
             qInCart = this.cart[i].quantity;
@@ -175,6 +148,9 @@ export default {
         const myJSON = JSON.stringify(this.cart);
         localStorage.setItem("cart", myJSON);
         this.$router.push({path: '/user/checkout'})
+    },
+    productDetail(product){
+      this.$router.push({name: 'product-detail',params:{id:product.pid}})
     }
   },
   computed:{

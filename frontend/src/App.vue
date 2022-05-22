@@ -36,6 +36,8 @@
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item" @click="$router.push('/user/profile')">Profile</a>
+              <a v-if="user.role == 'Customer'" class="navbar-item" @click="$router.push('/bills')">History</a>
+              <a v-if="user.role == 'Admin'" class="navbar-item" @click="$router.push('/bills')">All Bill</a>
               <a class="navbar-item" @click="logOut()">Log out</a>
             </div>
           </div>
@@ -98,6 +100,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   background: linear-gradient(221deg, #edc7b7, #eee2dc 73%);
+  min-height: 100vh;
 }
 
 nav {

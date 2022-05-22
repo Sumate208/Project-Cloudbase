@@ -103,16 +103,16 @@ router.post('/user/login', async (req, res, next) => {
 
         // Check if token already existed
         const [tokens] = await conn.query(
-            'SELECT * FROM tokens WHERE user_id=?', 
-            [user.id]
+            'SELECT * FROM tokens WHERE uid=?', 
+            [user.uid]
         )
         let token = tokens[0]?.token
         if (!token) {
             // Generate and save token into database
             token = generateToken()
             await conn.query(
-                'INSERT INTO tokens(user_id, token) VALUES (?, ?)', 
-                [user.id, token]
+                'INSERT INTO tokens(uid, token) VALUES (?, ?)', 
+                [user.uid, token]
             )
         }
 
@@ -128,6 +128,43 @@ router.post('/user/login', async (req, res, next) => {
 
 router.get('/user/me', isLoggedIn, async (req, res, next) => {
     res.json(req.user)
+})
+
+router.post('/user/update', async (req, res, next) => {
+    const tokenIn = req.body.token
+    const first_name = req.body.first_name
+    const last_name = req.body.last_name
+    const email = req.body.email
+    const mobile = req.body.mobile
+
+    const conn = await pool.getConnection()
+    await conn.beginTransaction()
+    try {
+        // Check id with token
+        const [uids] = await conn.query(
+            'SELECT uid FROM tokens WHERE token=?', 
+            [tokenIn]
+        )
+        const uid = uids[0]
+        if (!uid) {    
+            throw new Error('Please login')
+        }
+        await conn.query(
+            'UPDATE users SET first_name=?, last_name=?, email=?, mobile=?  WHERE uid=?;', 
+            [first_name, last_name, email, mobile, uid.uid]
+        )
+        const [user] = await conn.query(
+            'SELECT uid,username,role,first_name,last_name,email,mobile,join_date FROM users WHERE uid=?;', 
+            [uid.uid]
+        )
+        conn.commit()
+        res.status(200).json({'msg': 'Update Complete','user':user[0]})
+    } catch (error) {
+        conn.rollback()
+        res.status(400).json(error.toString())
+    } finally {
+        conn.release()
+    }
 })
 
 exports.router = router

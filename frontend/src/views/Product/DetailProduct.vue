@@ -1,140 +1,172 @@
 <template>
   <div class="container is-widescreen">
-    <section class="section" v-if="error">
-      <div class="container is-widescreen">
-        <div class="notification is-danger">{{ error }}</div>
-      </div>
-    </section>
     <section class="hero">
       <div class="hero-body">
-        <p class="title">{{ blog.title }}</p>
+        <p class="title">Product Detail</p>
       </div>
     </section>
-    <section class="section">
-      <div class="content">
-        <div class="card has-background-light">
-          <div class="card-image pt-5">
-            <div class="columns">
-              <div v-for="image in images" :key="image.id" class="column">
-                <figure class="image">
-                  <img
-                    :src="'http://localhost:3000/'+image.file_path"
-                    alt="Placeholder image"
-                    style="height: 500px; object-fit: cover;"
-                  />
-                </figure>
-              </div>
-            </div>
-          </div>
-          <div class="card-content">
-            <div class="content">{{ blog.content }}</div>
-            <div class="container pb-3">
-              <p class="subtitle">Comments</p>
-              <div class="columns">
-                <div class="column is-8">
-                  <input type="text" class="input" v-model="commTxt" placeholder="Add new comment" />
-                </div>
-                <div class="column is-4">
-                  <button @click="addComment" class="button">Add comment</button>
-                </div>
-              </div>
-            </div>
-            <div v-for="(comment,index) in comments" :key="comment.id" class="box">
-              <article class="media">
-                <div class="media-left">
-                  <figure class="image is-64x64">
-                    <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image" />
-                  </figure>
-                </div>
-                <div v-if="index===editToggle" class="media-content">
-                  <div class="content">
-                    <input v-model="editCommentMessage" class="input" type="text" />
-                    <p class="is-size-7">{{ comment.comment_date }}</p>
-                  </div>
-                  <nav class="level">
-                    <div class="level-left">
-                      <a class="level-item" aria-label="like">
-                        <span class="icon is-small pr-3">
-                          <i class="fas fa-heart" aria-hidden="true"></i>
-                        </span>
-                        Like (0)
-                      </a>
-                    </div>
-                    <div class="level-right">
-                      <div class="level-item">
-                        <button
-                          @click="saveEditComment(comment.id,index)"
-                          class="button is-primary"
-                        >
-                          <span>Save Comment</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-edit"></i>
-                          </span>
-                        </button>
-                      </div>
-                      <div class="level-item">
-                        <button @click="editToggle = -1" class="button is-info is-outlined">
-                          <span>Cancel</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-times"></i>
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </nav>
-                </div>
-                <div v-else class="media-content">
-                  <div class="content">
-                    <p>{{ comment.comment }}</p>
-                    <p class="is-size-7">{{ comment.comment_date }}</p>
-                  </div>
-                  <nav class="level">
-                    <div class="level-left">
-                      <a @click="addLikeComment(comment.id)" class="level-item" aria-label="like">
-                        <span class="icon is-small pr-3">
-                          <i class="fas fa-heart" aria-hidden="true"></i>
-                        </span>
-                        Like ({{comment.like}})
-                      </a>
-                    </div>
-                    <div class="level-right">
-                      <div class="level-item">
-                        <button
-                          @click="editToggle = index; editCommentMessage = comment.comment"
-                          class="button is-warning"
-                        >
-                          <span>Edit</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-edit"></i>
-                          </span>
-                        </button>
-                      </div>
-                      <div class="level-item">
-                        <button
-                          @click="deleteComment(comment.id, index)"
-                          class="button is-danger is-outlined"
-                        >
-                          <span>Delete</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-times"></i>
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </nav>
-                </div>
-              </article>
-            </div>
-          </div>
-          <footer class="card-footer">
-            <router-link class="card-footer-item" to="/">To Home Page</router-link>
-            <a class="card-footer-item" @click="deleteBlog">
-              <span>Delete this blog</span>
-            </a>
-          </footer>
+    <!-- Image -->
+    <img style="width:300px" :src="product.image" alt="Placeholder image">
+    <div class="columns is-mobile is-centered">
+      <div class="column is-one-quarter">
+        <label class="label">Product Name</label>
+        <div class="control">
+          <input
+            v-model="product.title"
+            :class="{ 'is-danger': vTitle }"
+            class="input"
+            type="text"
+            v-bind:disabled="!edit"
+          />
+        </div>
+        <template v-if="vTitle">
+          <p class="help is-danger">
+            This field is required
+          </p>
+        </template>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Brand</label>
+        <div class="control">
+          <input
+                v-model="product.brand"
+                class="input"
+                type="text"
+                v-bind:disabled="!edit"
+                placeholder="Option"
+              />
         </div>
       </div>
-    </section>
+    </div>
+    
+    <div class="columns is-mobile is-centered ">
+      <div class="column is-half">
+        <label class="label">Image Url</label>
+        <div class="control">
+          <input
+          v-model="product.image"
+          :class="{ 'is-danger': vImg }"
+          class="input"
+          type="text"
+          v-bind:disabled="!edit"
+          />
+        </div>
+        <template v-if="vImg">
+          <p class="help is-danger">
+            This field is required
+          </p>
+        </template>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column is-one-quarter">
+        <label class="label">Price</label>
+        <div class="control">
+          <input
+            v-model="product.price"
+            :class="{ 'is-danger': vPrice }"
+            class="input"
+            min="0"
+            required type="number"
+            v-bind:disabled="!edit"
+          />
+        </div>
+        <template v-if="vPrice">
+          <p class="help is-danger">
+            Price is required and cannot be negative.
+          </p>
+        </template>
+      </div>
+
+      <div class="column is-one-quarter">
+        <label class="label">Quantity</label>
+        <div class="control">
+          <input 
+            v-model="product.quantity"
+            :class="{ 'is-danger': vQuantity }"
+            class="input" 
+            min="0" 
+            required type="number" 
+            v-bind:disabled="!edit"/>
+        </div>
+        <template v-if="vQuantity">
+          <p class="help is-danger">
+            Quantity is required and cannot be negative.
+          </p>
+        </template>
+      </div>
+    </div>
+
+    <div class="columns is-mobile is-centered">
+      <div class="column is-one-quarter">
+        <label class="checkbox">
+          <input type="checkbox" v-model="product.bestsell" v-bind:disabled="!edit"/>
+          Bestsell
+        </label>
+      </div>
+    </div>
+    
+    <div class="columns is-mobile is-centered ">
+      <div class="column is-one-quarter">
+        <div class="field is-grouped">
+          <div class="control" v-if="!edit">
+            <button @click="edit = !edit" class="button is-link" >Edit Profile</button>
+          </div>
+          <div class="control" v-if="edit">
+            <button @click="openModalUpdate()" class="button is-success" >Save Change</button>
+          </div>
+          <div class="control">
+            <button @click="$router.go(-1)" class="button is-link is-light">Back</button>
+          </div>
+        </div>
+      </div>
+      <div class="column is-one-quarter">
+        <div class="field is-grouped is-grouped-right">
+          <div class="control">
+            <button @click="modal_del = !modal_del" class="button is-danger" >Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ModalConfirmUpdate -->
+    <div class="modal" :class="{'is-active':modal_confirm}">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Update Product Detail</p>
+          <button class="delete" aria-label="close" @click="modal_confirm = false"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Are you sure to update detail {{ product.title }} ?</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-success" @click="updateDetail()">Confirm</button>
+          <button class="button" @click="modal_confirm = false">Cancel</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ModalConfirmDelete -->
+    <div class="modal" :class="{'is-active':modal_del}">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Delete Product</p>
+          <button class="delete" aria-label="close" @click="modal_del = false"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Are you sure to delete {{ product.title }}?</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-danger" @click="deleteProduct()">Delete</button>
+          <button class="button" @click="modal_del = false">Cancel</button>
+        </footer>
+      </div>
+    </div>
+    
   </div>
 </template>
 
@@ -144,98 +176,90 @@ import axios from "axios";
 export default {
   data() {
     return {
-      blog: {},
-      comments: [],
-      images: [],
-      error: null,
-      commTxt: "",
-      editToggle: -1,
-      editCommentMessage: "",
+      product: {},
+      vTitle: false,
+      vImg: false,
+      vPrice: false,
+      vQuantity: false,
+      edit: false,
+      modal_confirm: false,
+      modal_del: false,
     };
   },
   mounted() {
-    this.getBlogDetail(this.$route.params.id);
+    this.getProductDetail(this.$route.params.id);
   },
   methods: {
-    getBlogDetail(blogId) {
+    getProductDetail(pid) {
       axios
-        .get(`http://localhost:3000/blogs/${blogId}`)
-        .then((response) => {
-          this.blog = response.data.blog;
-          this.images = response.data.images;
-          this.comments = response.data.comments;
+        .get(`http://localhost:3000/product/${pid}`)
+        .then((res) => {
+          this.product = res.data.product
         })
         .catch((error) => {
           this.error = error.response.data.message;
         });
     },
-    addComment() {
-      axios
-        .post(`http://localhost:3000/${this.blog.id}/comments`, {
-          comment: this.commTxt,
-        })
-        .then((response) => {
-          this.commTxt = "";
-          this.comments.push(response.data);
-        })
-        .catch((error) => {
-          this.error = error.response.data.message;
-        });
-    },
-    saveEditComment(commentId, index) {
-      axios
-        .put(`http://localhost:3000/comments/${commentId}`, {
-          comment: this.editCommentMessage,
-        })
-        .then((response) => {
-          this.comments[index].comment = response.data.comment;
-          this.editToggle = -1;
-        })
-        .catch((error) => {
-          this.error = error.message;
-        });
-    },
-    deleteComment(commentId, index) {
-      const result = confirm(`Are you sure you want to delete this comment`);
-      if (result) {
-        axios
-          .delete(`http://localhost:3000/comments/${commentId}`)
-          .then((response) => {
-            console.log(response);
-            this.comments.splice(index, 1);
-          })
-          .catch((error) => {
-            this.error = error.message;
-          });
+    openModalUpdate(){
+      this.vTitle = false;
+      this.vImg = false;
+      this.vPrice = false;
+      this.vQuantity = false;
+      
+      if(this.product.title == ""){
+        this.vTitle = true
+      }
+      else if(this.product.image == ""){
+        this.vImg = true
+      }
+      else if(parseInt(this.product.price) < 0 || this.product.price == ""){
+        this.vPrice = true
+      }
+      else if(parseInt(this.product.quantity) < 0 || this.product.quantity == ""){
+        this.vQuantity = true
+      }
+      else{
+        this.modal_confirm = true
       }
     },
-    addLikeComment(commentId) {
-      axios
-        .put(`http://localhost:3000/comments/addlike/${commentId}`)
-        .then((response) => {
-          let selectedComment = this.comments.filter(
-            (e) => e.id === commentId
-          )[0];
-          console.log(selectedComment);
-          selectedComment.like = response.data.like;
-          console.log(selectedComment);
-        })
-        .catch((error) => (this.error = error.message));
-    },
-    deleteBlog() {
-      const result = confirm(
-        `Are you sure you want to delete \'${this.blog.title}\'`
-      );
-      if (result) {
+    updateDetail() {
+      let data = {
+          pid : this.product.pid,
+          title: this.product.title,
+          brand: this.product.brand,
+          price: this.product.price,
+          image: this.product.image,
+          quantity: this.product.quantity,
+          bestsell: this.product.bestsell,
+          token: localStorage.getItem("token"),
+        };
+        if(this.bestsell == true) {data.bestsell = 1;}
+        if(this.bestsell == false) {data.bestsell = 0;}
         axios
-          .delete(`http://localhost:3000/blogs/${this.blog.id}`)
-          .then((response) => {
-            this.$router.push("/");
+          .put("http://localhost:3000/product/update", data)
+          .then((res) => {
+            alert(res.data.msg);
+            this.edit = false;
+            this.modal_confirm = false;
           })
-          .catch((error) => {
-            alert(error.response.data.message);
+          .catch((err) => {
+            alert(err.response.data.message)
           });
+    },
+    deleteProduct() {
+      let data = {
+        token: localStorage.getItem("token"),
+        pid : this.product.pid,
       }
+      axios
+        .put('http://localhost:3000/delete/product', data)
+        .then((res) => {
+          alert("Product has been deleted.");
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          alert(error.response.data.err);
+        });
     },
   },
 };

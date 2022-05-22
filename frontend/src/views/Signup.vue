@@ -202,7 +202,7 @@ export default {
 
       // เช็คว่าในฟอร์มไม่มี error
       if (!this.$v.$invalid) {
-        let data = {
+        const data = {
           username: this.username,
           password: this.password,
           confirm_password: this.confirm_password,

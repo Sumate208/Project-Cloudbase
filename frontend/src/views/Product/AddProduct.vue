@@ -3,8 +3,6 @@
     <section class="section" v-if="error">
       <div class="container is-widescreen">
         <div class="notification is-danger">
-          <!-- <%= error.code + ': ' + error.sqlMessage %> -->
-          <!---->
           {{ error }}
         </div>
       </div>
@@ -77,7 +75,7 @@ export default {
       title: null,
       price: null,
       brand: null,
-      images: null,
+      image: null,
       quantity: null,
       bestsell: false,
     };

@@ -12,16 +12,12 @@ app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 // routers
-const indexRouter = require('./routes/index')
-const productRouter = require('./routes/product')
-const commentRouter = require('./routes/comment')
-const imageRouter = require('./routes/image')
+const productsRouter = require('./routes/product')
+const billRouter = require('./routes/bill')
 const userRouter = require('./routes/user')
 
-app.use(indexRouter.router)
-app.use(productRouter.router)
-app.use(commentRouter.router)
-app.use(imageRouter.router)
+app.use(productsRouter.router)
+app.use(billRouter.router)
 app.use(userRouter.router)
 
 app.listen(3000, () => {

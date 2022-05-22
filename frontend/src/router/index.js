@@ -31,7 +31,7 @@ const routes = [
   },
   {
     path: '/product/detail/:id',
-    name: 'detail',
+    name: 'product-detail',
     component: () => import('../views/Product/DetailProduct.vue')
   },
   {
@@ -40,10 +40,10 @@ const routes = [
     component: () => import('../views/Product/AddProduct.vue')
   },
   {
-    path: '/product/update/:id',
-    name: 'update-product',
-    component: () => import('../views/Product/UpdateProduct.vue')
-  },
+    path: '/bills',
+    name: 'bills',
+    component: () => import('../views/Bills.vue')
+  }, 
 ]
 
 const router = new VueRouter({ routes })

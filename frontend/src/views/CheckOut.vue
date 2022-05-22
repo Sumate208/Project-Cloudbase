@@ -42,63 +42,44 @@
                 <div class="column">
                     <label class="label">Firstname</label>
                     <div class="control">
-                        <input class="input" type="text" v-model="user.first_name" disabled>
+                        <input class="input" type="text" v-model="this.$parent.$data.user.first_name" disabled>
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Lastname</label>
                     <div class="control">
-                        <input class="input" type="text" v-model="user.last_name" disabled>
+                        <input class="input" type="text" v-model="this.$parent.$data.user.last_name" disabled>
                     </div>
                 </div>
                 <div class="column">
                     <label class="label">Tel</label>
                     <div class="control">
-                        <input class="input" type="text" v-model="user.mobile" disabled>
+                        <input class="input" type="text" v-model="this.$parent.$data.user.mobile" disabled>
                     </div>
                 </div>
             </div>
             <!-- click this button to open Order modal ----------------- -->
-            <a @click="modal_confirm_order = !modal_confirm_order" class="button is-warning">Confirm Order</a>
+            <button v-bind:disabled="haveItem" @click="modal_confirm = true" class="button is-warning">Confirm Order</button>
         </div>
-    
-        <div class="modal" v-bind:class="{'is-active':modal_confirm_order}">
-            <div class="modal-background" @click="modal_confirm_order = !modal_confirm_order"></div>
-            <div class="modal-card" style="max-width: 960px;width: 90%;">
+        
+        <!-- ModalConfirmUpdate -->
+        <div class="modal" :class="{'is-active':modal_confirm}">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                <p class="modal-card-title">Comfirm Order</p>
+                <button class="delete" aria-label="close" @click="modal_confirm = false"></button>
+                </header>
                 <section class="modal-card-body">
-                    <table id='order-table' style="width: 100%;" class="table is-bordered">
-                        <!-- ใส่ข้อมูลของ table ไว้ในนี้ -------------------------------------------->
-                        <tr>
-                            <th colspan="4" style="text-align: center;">Order Detail</th>
-                        </tr>
-                        <tr>
-                            <th colspan="2">ชื่อ : {{ user.first_name+ " " +user.last_name }}</th>
-                            <th colspan="2">เบอร์โทร : {{ user.mobile }}</th>
-                        </tr>
-                        <tr>
-                            <th colspan="4" style="text-align: center;">รายการสินค้า</th>
-                        </tr>
-                        <tr>
-                            <th>ชื่อสินค้า</th>
-                            <th>ราคาต่อหน่วย</th>
-                            <th>จำนวน</th>
-                            <td>ราคารวม</td>
-                        </tr>
-                        <tr v-for="product in cart" :key="product.id">
-                            <td>{{ product.title }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>{{ product.quantity*product.price }}</td>
-                        </tr>
-                        <tr>
-                            <th colspan="2"></th>
-                            <th>ราคารวมทั้งหมด</th>
-                            <th>{{ totalPrice }}</th>
-                        </tr>
-                    </table>
+                <p>Are you sure to Order?</p>
                 </section>
+                <footer class="modal-card-foot">
+                <button class="button is-success" @click="createBill()">Confirm</button>
+                <button class="button" @click="modal_confirm = false">Cancel</button>
+                </footer>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -110,11 +91,13 @@ export default {
             user: null,
             modal_confirm: false,
             cart: [],
-            modal_confirm_order: false,
+            haveItem: false
         };
     },
     created(){
         this.cart = JSON.parse(localStorage.getItem("cart"));
+        if(this.cart.length>0){this.haveItem = false}
+        else{this.haveItem = true}
     },
     computed:{
         totalPrice(){
@@ -123,7 +106,7 @@ export default {
                 sum += (product.quantity*product.price)
             }
             return sum
-        }
+        },
     },
     mounted() {
         this.getUser();
@@ -134,6 +117,24 @@ export default {
                 this.user = res.data
             })
         },
+        createBill(){
+            this.modal_confirm = false;
+            const data = {
+                token: localStorage.getItem("token"),
+                cart: this.cart
+            }
+            axios
+            .post("http://localhost:3000/create/bill", data)
+            .then((res) => {
+                this.modal_confirm = false;
+                const myJSON = JSON.stringify([]);
+                localStorage.setItem("cart", myJSON);
+                this.$router.push({path: '/bills'})
+            })
+            .catch((err) => {
+                alert(err.response.data.msg)
+            });
+        }
     },
 };
 </script>
